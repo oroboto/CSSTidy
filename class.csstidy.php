@@ -754,10 +754,18 @@ class csstidy {
 
 							$this->optimise->subvalue();
 							if ($this->sub_value != '') {
+								/* original, disabled for fix below
 								if (substr($this->sub_value, 0, 6) == 'format') {
 									$this->sub_value = str_replace(array('format(', ')'), array('format("', '")'), $this->sub_value);
-								}
+								}//*/
 								$this->sub_value_arr[] = $this->sub_value;
+								// [FIX] @font-face with multiple fonts and CSSTidy
+								// (http://www.pixelastic.com/blog/86:csstidy-and-the-woff-fonts)
+								foreach($this->sub_value_arr as &$sub_value) {
+									if (substr($sub_value, 0, 6) == 'format') {
+										$sub_value = str_replace(array('format(', ')'), array('format("', '")'), $sub_value);
+									}
+								}
 								$this->sub_value = '';
 							}
 
